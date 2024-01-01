@@ -1,9 +1,8 @@
-
 #include "AwsIoTCLI.h"
 #include <iostream>
-#include <cstdlib>
 #include <fstream>
 #include <sstream>
+#include <cstdlib>
 #include <unistd.h>
 
 AwsIoTCLI::AwsIoTCLI(const std::string& workingDirectory) : workingDirectory(workingDirectory) {}
@@ -39,46 +38,20 @@ void AwsIoTCLI::readResponseFile(const std::string& responseFilePath, std::strin
 
     std::string response = responseStream.str();
 
-    std::istringstream iss(response);
-    std::string line;
-
-    while (std::getline(iss, line)) {
-        size_t arnPos = line.find("certificateArn");
-        if (arnPos != std::string::npos) {
-            size_t start = line.find('"', arnPos);
-            size_t end = line.rfind('"', arnPos);
-            certificateArn = line.substr(start, end - start);
-
-            // Check if the certificateArn starts with double quotes, remove them
-            if (!certificateArn.empty() && certificateArn.front() == '"') {
-                certificateArn = certificateArn.substr(1, certificateArn.size() - 1);
-            }
-
-            // Remove trailing comma, if present
-            size_t lastCharPos = certificateArn.find_last_not_of(", \t\n\r\f\v");
-            if (lastCharPos != std::string::npos) {
-                certificateArn.erase(lastCharPos + 1);
-            }
-        } else if (line.find("certificateId") != std::string::npos) {
-            size_t idPos = line.find('"');
-            size_t start = idPos + 1;
-            size_t end = line.rfind('"');
-            certificateId = line.substr(start, end - start);
-
-            // Check if the certificateId starts with double quotes, remove them
-            if (!certificateId.empty() && certificateId.front() == '"') {
-                certificateId = certificateId.substr(1, certificateId.size() - 1);
-            }
-
-            // Remove trailing comma, if present
-            size_t lastCharPos = certificateId.find_last_not_of(", \t\n\r\f\v");
-            if (lastCharPos != std::string::npos) {
-                certificateId.erase(lastCharPos + 1);
-            }
-        }
-    }
+    // Extract values using the provided JSON parsing logic
+    certificateArn = extractValue(response, "certificateArn");
+    certificateId = extractValue(response, "certificateId");
 }
 
+std::string AwsIoTCLI::extractValue(const std::string& jsonString, const std::string& key) {
+    std::size_t keyPos = jsonString.find("\"" + key + "\"");
+    if (keyPos != std::string::npos) {
+        std::size_t valueStart = jsonString.find("\"", keyPos + key.length() + 2);
+        std::size_t valueEnd = jsonString.find("\"", valueStart + 1);
+        return jsonString.substr(valueStart + 1, valueEnd - valueStart - 1);
+    }
+    return "";
+}
 
 void AwsIoTCLI::createThing(const std::string& thingName) {
     std::string createThingCommand = "aws iot create-thing --thing-name " + thingName;

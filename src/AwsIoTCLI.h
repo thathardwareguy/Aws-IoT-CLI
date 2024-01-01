@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <string>
@@ -12,9 +11,9 @@ public:
 
 private:
     std::string workingDirectory;
-    std::string responseFilePath;
 
     void setWorkingDirectory();
     void executeCommand(const std::string& command, bool printOutput = true);
     void readResponseFile(const std::string& responseFilePath, std::string& certificateArn, std::string& certificateId);
+    std::string extractValue(const std::string& jsonString, const std::string& key);
 };

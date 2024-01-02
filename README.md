@@ -17,7 +17,7 @@ Follow these steps to build and run the AWS IoT CLI:
 1. **Clone the Repository:**
 
     ```bash
-    git clone https://github.com/yourusername/awsiotcli.git
+    git clone https://github.com/thathardwareguy/Aws-IoT-CLI.git
     cd awsiotcli
     ```
 
@@ -66,22 +66,22 @@ Once the CLI is running, you will see a menu with options to perform various ope
    ```bash
     /mnt/c/Users/user/Desktop/Embedded_Systems/awsiotcli/
     ```
-![Enter Working Directory](img\directory.PNG)
+![Enter Working Directory](img/directory.PNG)
    The working directory is essential to ensure that the certificates generated are placed in the specified location of the user.
 2. **Choose "Create Thing" (Option 1)**
 
-  ![Select Option 1](img\menu.PNG)
+  ![Select Option 1](img/menu.PNG)
 
 3. **Enter the name of the thing to be created**
 
-   ![Enter thing name](img\name.PNG)
+   ![Enter thing name](img/name.PNG)
 
    Ensure that there is a `policy.json` file in the specified working directory. The `policy.json` file contains the access policies for the created IoT thing.
    Once the device is successfully created, you will get an output similar to this below.
-   ![Device Creation Complete](img\output.PNG)
+   ![Device Creation Complete](img/output.PNG)
 
    The specified directory should now contain the device certificates and keys.
-   ![Certificates for Device](img\certs-output.PNG)
+   ![Certificates for Device](img/certs-output.PNG)
 ...
 
 ## Contributing

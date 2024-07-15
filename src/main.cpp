@@ -3,10 +3,14 @@
 #include <thread>
 #include <chrono>
 #include <limits>
+#include   "json.hpp"
+#include <fstream>
+
+using json = nlohmann::json;
 
 int main() {
     std::string workingDirectory;
-    std::cout << "Welcome to AWS IoT CLI v1.0.0!\n";
+    std::cout << "Welcome to AWS IoT CLI v1.1.0!\n";
     std::cout << "Enter the absolute path of the working directory: ";
     std::getline(std::cin, workingDirectory);
 
@@ -16,14 +20,7 @@ int main() {
         std::cout << "AWS IoT CLI Menu:\n";
         std::cout << "(1) Create Thing\n";
         std::cout << "(2) List Things\n";
-        std::cout << "(3) Describe Thing Group\n";
-        std::cout << "(4) Create Thing Group\n";
-        std::cout << "(5) Attach Thing Principal\n";
-        std::cout << "(6) Describe Thing\n";
-        std::cout << "(7) Delete Thing\n";
-        std::cout << "(8) List Policies\n";
-        std::cout << "(9) Create Thing Type\n";
-        std::cout << "(10) Update Thing\n";
+        std::cout << "(3) Create Multiple Things\n"; // New menu option
         std::cout << "(11) Exit\n";
         std::cout << "Enter your choice (1-11): ";
 
@@ -43,11 +40,38 @@ int main() {
                     std::string thingName;
                     std::cout << "Enter the name of the thing to be created: ";
                     std::getline(std::cin, thingName);
-                    awsIoTCLI.createThing(thingName);
+                    std::string policyName;
+                    std::cout << "Enter the name of the policy JSON file: ";
+                    std::getline(std::cin, policyName);
+                    awsIoTCLI.createThing(thingName, policyName);
                 }
                 break;
             case 2:
                 awsIoTCLI.listThings();
+                break;
+                    case 3:
+                {
+                    int numThings;
+                    std::cout << "Enter the number of things to be created: ";
+                    std::cin >> numThings;
+                    std::cin.ignore();
+
+                    std::string jsonFileName;
+                    std::cout << "Enter the name of the JSON file containing the device names: ";
+                    std::getline(std::cin, jsonFileName);
+
+                    std::string policyName;
+                    std::cout << "Enter the name of the policy JSON file: ";
+                    std::getline(std::cin, policyName);
+
+                    std::vector<std::string> thingNames = awsIoTCLI.readDeviceNamesFromJson(jsonFileName);
+                    if (thingNames.size() < numThings) {
+                        std::cerr << "Not enough device names in the JSON file.\n";
+                        break;
+                    }
+
+                    awsIoTCLI.createMultipleThings({thingNames.begin(), thingNames.begin() + numThings}, policyName);
+                }
                 break;
             case 11:
                 std::cout << "Exiting program.\n";
